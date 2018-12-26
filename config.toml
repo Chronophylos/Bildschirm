@@ -1,5 +1,6 @@
 [screen]
 hide_cursor = true
+image_path = "D:\\Work\\Wallpaper"
 
 [slideshow]
 interval = 30

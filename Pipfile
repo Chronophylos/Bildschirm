@@ -10,6 +10,7 @@ flake8 = "*"
 [packages]
 toml = "*"
 pillow = "*"
+pyyaml = "*"
 pyqt5 = "==5.11.3"
 
 [requires]

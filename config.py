@@ -10,10 +10,17 @@ class MetaConfig:
 class ScreenConfig(MetaConfig):
     hide_cursor = True
     image_path = r"/media/bildschirm"
+    file_types = [".png", ".jpg", ".jpeg"]
+    gui = "Qt"
+    width = 1920
+    height = 1080
 
     def __init__(self, d=dict()):
         self._configure(d, "hide_cursor")
         self._configure(d, "image_path")
+        self._configure(d, "gui")
+        self._configure(d, "width")
+        self._configure(d, "height")
 
 
 class SlideshowConfig(MetaConfig):
