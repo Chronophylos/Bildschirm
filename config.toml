@@ -1,0 +1,6 @@
+[screen]
+hide_cursor = true
+
+[slideshow]
+interval = 30
+history_length = 256
