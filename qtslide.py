@@ -123,7 +123,7 @@ class Slideshow(QMainWindow):
         logger.debug("Scaling Image to fit " +
                      str(self.config.screen.width) + "x" +
                      str(self.config.screen.height) +
-                     " while keeping Aspect Ration")
+                     " while keeping Aspect Ratio")
         pixmap = pixmap.scaled(self.config.screen.width,
                                self.config.screen.height,
                                Qt.KeepAspectRatio,
