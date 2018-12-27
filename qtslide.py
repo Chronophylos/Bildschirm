@@ -31,7 +31,7 @@ class Slideshow(QMainWindow):
         logger.debug("Set Slide Background Color to black")
         self.slide.setStyleSheet("background-color: black;")
 
-        logger.info(f"Setting Fullscreen to " +
+        logger.info("Setting Fullscreen to " +
                     str(self.config.slideshow.fullscreen))
         if self.config.slideshow.fullscreen:
             self.slide.setWindowState(Qt.WindowFullScreen)
