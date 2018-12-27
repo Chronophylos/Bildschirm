@@ -19,7 +19,6 @@ class History:
     """
 
     cursor = 0
-    maxlen: int
     _list = list()
 
     def __init__(self, maxlen):
@@ -68,7 +67,6 @@ class History:
 
 class RandomImageList:
     cursor = 0
-    _list: list
 
     def __init__(self, _list):
         self._list = _list

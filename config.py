@@ -39,9 +39,6 @@ class SlideshowConfig(MetaConfig):
 
 
 class Config(MetaConfig):
-    screen: ScreenConfig
-    slideshow: SlideshowConfig
-
     def __init__(self, d=dict()):
         self._make_config(d, "screen", ScreenConfig)
         self._make_config(d, "slideshow", SlideshowConfig)

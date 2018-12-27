@@ -11,7 +11,7 @@ flake8 = "*"
 toml = "*"
 pillow = "*"
 pyyaml = "*"
-pyqt5 = "==5.9.2"
+pyqt5 = "==5.7.1"
 
 [requires]
-python_version = "3.7"
+python_version = "3.5"

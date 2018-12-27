@@ -20,7 +20,6 @@ class Slideshow(tkinter.Tk):
     images = list()
     history = list()
     history_pointer = 0
-    config: Config
 
     def __init__(self, _config: Config):
         tkinter.Tk.__init__(self)

@@ -10,10 +10,8 @@ logger = create_logger(__name__)
 
 
 class Slideshow(QMainWindow):
-    image_list: RandomImageList
-    history: History
     image_path = str()
-    timer: QTimer
+    timer = QTimer()
 
     def __init__(self, app, _config: Config):
         self.app = app
@@ -43,7 +41,6 @@ class Slideshow(QMainWindow):
         self.slide.show()
 
         logger.debug("Setting up Slideshow Timer")
-        self.timer = QTimer()
         self.timer.timeout.connect(self.tick)
 
         logger.debug("Setting Actions")
