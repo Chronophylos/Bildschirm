@@ -42,6 +42,8 @@ def main():
         slideshow = Slideshow(config)
         slideshow.start()
         logger.info("Exiting")
+    else:
+        logger.error("Invalid GUI Type: " + config.screen.gui + " screen.gui should be one of Qt, Tk")
 
 
 if __name__ == "__main__":

@@ -141,7 +141,7 @@ class Slideshow(tkinter.Tk):
         self.schedule_next_image()
 
     def load_image(self):
-        logger.info(f"Loading {self.image_name}")
+        logger.info("Loading " + self.image_name)
 
         # actually load the image from the given path
         self.image = Image.open(self.image_name)
