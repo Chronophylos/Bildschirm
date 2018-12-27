@@ -25,7 +25,7 @@ def main():
         from qtslide import Slideshow
 
         logger.debug("Creating QApplication")
-        app = QApplication([])
+        app = QApplication(sys.argv)
 
         logger.debug("Creating QtSlideshow")
         slideshow = Slideshow(app, config)
