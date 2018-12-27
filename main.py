@@ -17,7 +17,7 @@ def main():
         logger.error("While Loading Config: " + e)
         return
 
-    logger.info(f"Using {config.screen.gui} as GUI")
+    logger.info("Using {} as GUI".format(config.screen.gui))
 
     if config.screen.gui == "Qt":
         logger.debug("Importing required packages for Qt")

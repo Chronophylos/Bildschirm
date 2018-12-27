@@ -72,8 +72,8 @@ class Slideshow(tkinter.Tk):
         self.quit()
 
     def load_images(self):
-        logger.info(f"Getting all files in {self.image_path} with allowed"
-                    f"endings ({self.allowed_extension})")
+        logger.info("Getting all files in {} with allowed".format(self.image_path) +
+                    "endings ({})".format(self.allowed_extensions))
         self.images = get_files(self.image_path, self.allowed_extensions)
         self.shuffle_images()
 
@@ -146,8 +146,7 @@ class Slideshow(tkinter.Tk):
         # actually load the image from the given path
         self.image = Image.open(self.image_name)
 
-        logger.debug("Loaded Image Size: "
-                     f"{self.image.width}x{self.image.height}")
+        logger.debug("Loaded Image Size: {}x{}".format(self.image.width, self.image.height))
 
         if self.image.width > 1920 or self.image.height > 1080:
             wscale = 1920 / self.image.width
@@ -160,7 +159,7 @@ class Slideshow(tkinter.Tk):
             new_width = int(scale * self.image.width)
             new_height = int(scale * self.image.height)
 
-            logger.info(f"Resizing image to W: {new_width} H: {new_height}.")
+            logger.info("Resizing image to {}x{}".format(new_width, new_height))
 
             self.image = self.image.resize((new_width, new_height),
                                            Image.LANCZOS)

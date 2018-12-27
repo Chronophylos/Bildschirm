@@ -8,9 +8,9 @@ pylint = "*"
 flake8 = "*"
 
 [packages]
-toml = "*"
+toml = "==0.9.1"
 pillow = "*"
-pyyaml = "*"
+pyyaml = "==3.13"
 pyqt5 = "==5.7.1"
 
 [requires]

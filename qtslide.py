@@ -84,7 +84,7 @@ class Slideshow(QMainWindow):
         logger.debug("Trying to get previous Image")
         if self.history.hasPrev():
             logger.info("Loading previous Image from History "
-                        f"[{self.history.cursor}/{self.history.size()}]")
+                        "[{}/{}]".format(self.history.cursor, self.history.size()))
             self.setImage(self.history.prev())
         else:
             logger.info("Cannot get previous Image. "
