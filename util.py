@@ -1,6 +1,7 @@
 import glob
 import os.path
 import random
+from PIL import ExifTags
 
 
 def get_files(path, extensions):
@@ -12,13 +13,15 @@ def get_files(path, extensions):
             result.append(os.path.normpath(filename))
     return result
 
+
 def getExif(image):
-     exif = {}
-     info = image._getexif()
-     for tag, value in info.items():
-         decoded = TAGS.get(tag, tag)
-         exif[decoded] = value
-     return exif
+    exif = {}
+    info = image._getexif()
+    for tag, value in info.items():
+        decoded = ExifTags.TAGS.get(tag, tag)
+        exif[decoded] = value
+    return exif
+
 
 class History:
     """

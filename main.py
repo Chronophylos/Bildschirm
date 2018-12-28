@@ -13,8 +13,11 @@ def main():
     try:
         logger.info("Loading Config")
         config = Config(toml.load("config.toml"))
-    except toml.TomlDecodeError as e:
-        logger.error("While Loading Config: " + e)
+    except FileNotFoundError:
+        logger.warn("Config not found falling back to defaults")
+        config = Config()
+    except Exception as e:
+        logger.error("While Loading Config: " + str(e))
         return
 
     logger.info("Using {} as GUI".format(config.screen.gui))

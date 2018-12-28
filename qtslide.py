@@ -1,11 +1,11 @@
 from PyQt5.QtCore import Qt, QTimer
-from PyQt5.QtGui import QImage, QPixmap, QTransform
+from PyQt5.QtGui import QPixmap, QTransform
 from PyQt5.QtWidgets import QAction, QLabel, QMainWindow
-from PIL import ImageQt
+from PIL import ImageQt, Image
 
 from config import Config
 from logger import create_logger
-from util import History, RandomImageList, get_files, getExif, getExifAngle
+from util import History, RandomImageList, get_files, getExif
 
 logger = create_logger(__name__)
 
@@ -85,7 +85,8 @@ class Slideshow(QMainWindow):
         logger.debug("Trying to get previous Image")
         if self.history.hasPrev():
             logger.info("Loading previous Image from History "
-                        "[{}/{}]".format(self.history.cursor, self.history.size()))
+                        "[{}/{}]".format(self.history.cursor,
+                                         self.history.size()))
             self.setImage(self.history.prev())
         else:
             logger.info("Cannot get previous Image. "
@@ -123,18 +124,19 @@ class Slideshow(QMainWindow):
         self.image_path = image_path
 
         logger.debug("Loading Image from " + str(image_path))
-        self.image = ImageQt(image_path)
+        image = ImageQt.ImageQt(Image.open(self.image_path))
 
-        logger.debug("Getting EXIF Data from image")
-        exif = getExif(self.image)
+        if hasattr(image, "_getexif"):
+            logger.debug("Getting EXIF Data from image")
+            exif = getExif(image)
 
-        logger.debug("Image EXIF: " + exif)
+            logger.debug("Image EXIF: " + exif)
 
-        pixmap = QPixmap.fromImage(self.image)
+            if exif and "Orientation" in exif:
+                logger.debug("Found Orientation in EXIF")
+                pixmap = self.applyExifOrientation(image, exif)
 
-        if "Orientation" in exif:
-            logger.debug("Found Orientation in EXIF")
-            pixmap = self.applyExifOrientation(pixmap, exif)
+        pixmap = QPixmap.fromImage(image)
 
         logger.debug("Scaling Image to fit " +
                      str(self.config.screen.width) + "x" +
@@ -148,36 +150,47 @@ class Slideshow(QMainWindow):
         logger.debug("Setting Slide Pixmap")
         self.slide.setPixmap(pixmap)
 
-    def applyExifOrientation(self, pixmap, exif):
+    def applyExifOrientation(self, image, exif):
         o = exif["Orientation"]
         if o == 1:
-            return pixmap
+            pass
         elif o == 2:
+            logger.debug("Mirroring Image horizontally")
             # mirror horizontal
-            return pixmap
+            image = image.transpose(Image.FLIP_LEFT_RIGHT)
         elif o == 3:
+            logger.debug("Rotating Image by 180 degree")
             # rotate 180 degree
-            return pixmap.transform(QTransform.rotate(180))
+            image = image.transpose(Image.ROTATE_180)
         elif o == 4:
+            logger.debug("Mirroring Image vertically")
             # mirror vertical
-            return pixmap
+            image = image.transpose(Image.FLIP_TOP_BOTTOM)
         elif o == 5:
+            logger.debug("Mirroring Image horizontally and "
+                         "rotating by 270 degree")
             # mirror horizontal
+            image = image.transpose(Image.FLIP_LEFT_RIGHT)
             # rotate 270 degree
-            return pixmap.transform(QTransform.rotate(270))
+            image = image.transpose(Image.ROTATE_270)
         elif o == 6:
+            logger.debug("Rotating Image by 270 degree")
             # rotate 270 degree
-            return pixmap.transform(QTransform.rotate(270))
+            image = image.transpose(Image.ROTATE_270)
         elif o == 7:
-            # mirrot horizontal
+            logger.debug("Mirroring Image horizontally and "
+                         "rotating by 90 degree")
+            # mirror horizontal
+            image = image.transpose(Image.FLIP_LEFT_RIGHT)
             # rotate 90 degree
-            return pixmap.transform(QTransform.rotate(90))
+            image = image.transpose(Image.ROTATE_90)
         elif o == 8:
+            logger.debug("Rotating Image by 90 degree")
             # rotate 90 degree
-            return pixmap.transform(QTransform.rotate(90))
+            image = image.transpose(Image.ROTATE_90)
         else:
             logger.error("Unknown Orientation")
-            return pixmap
+        return image
 
     def populateImageList(self):
         files = get_files(self.config.screen.image_path,
