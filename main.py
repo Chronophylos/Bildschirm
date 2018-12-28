@@ -18,7 +18,7 @@ def main():
         config = Config()
     except Exception as e:
         logger.error("While Loading Config: " + str(e))
-        return
+        sys.exit(127)
 
     logger.info("Using {} as GUI".format(config.screen.gui))
 
@@ -28,13 +28,25 @@ def main():
         from qtslide import Slideshow
 
         logger.debug("Creating QApplication")
-        app = QApplication(sys.argv)
+        try:
+            app = QApplication(sys.argv)
+        except Exception as e:
+            logger.exception(e)
+            sys.exit(127)
 
         logger.debug("Creating QtSlideshow")
-        slideshow = Slideshow(app, config)
-        slideshow.start()
+        try:
+            slideshow = Slideshow(app, config)
+            slideshow.start()
+        except Exception as e:
+            logger.exception(e)
+            sys.exit(127)
 
-        code = app.exec_()
+        try:
+            code = app.exec_()
+        except Exception as e:
+            logger.exception(e)
+            sys.exit(127)
         logger.info("Exiting with " + str(code))
         sys.exit(code)
     elif config.screen.gui == "Tk":
@@ -42,11 +54,18 @@ def main():
         from tkslide import Slideshow
 
         logger.debug("Creating TkSlideshow")
-        slideshow = Slideshow(config)
-        slideshow.start()
-        logger.info("Exiting")
+        try:
+            slideshow = Slideshow(config)
+            slideshow.start()
+            logger.info("Exiting")
+            sys.exit(0)
+        except Exception as e:
+            logger.exception(e)
+            sys.exit(127)
     else:
-        logger.error("Invalid GUI Type: " + config.screen.gui + " screen.gui should be one of Qt, Tk")
+        logger.error("Invalid GUI Type: " + config.screen.gui +
+                     " screen.gui should be one of Qt, Tk")
+        sys.exit(127)
 
 
 if __name__ == "__main__":
