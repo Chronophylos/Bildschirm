@@ -1,3 +1,6 @@
 __pycache__
 .vscode
 *.log
+
+run.sh
+config.toml
