@@ -1,10 +1,11 @@
 from PyQt5.QtCore import Qt, QTimer
-from PyQt5.QtGui import QImage, QPixmap
+from PyQt5.QtGui import QImage, QPixmap, QTransform
 from PyQt5.QtWidgets import QAction, QLabel, QMainWindow
+from PIL import ImageQt
 
 from config import Config
 from logger import create_logger
-from util import History, RandomImageList, get_files
+from util import History, RandomImageList, get_files, getExif, getExifAngle
 
 logger = create_logger(__name__)
 
@@ -113,9 +114,27 @@ class Slideshow(QMainWindow):
         logger.info("Quitting")
         self.app.exit(code)
 
-    def setFrame(self, frame):
-        logger.debug("Setting new Frame")
-        pixmap = QPixmap.fromImage(frame)
+    def setImage(self, image_path):
+        if self.image_path == image_path:
+            logger.warn("Image already set. Skipping.")
+            return
+
+        logger.debug("Setting new Image")
+        self.image_path = image_path
+
+        logger.debug("Loading Image from " + str(image_path))
+        self.image = ImageQt(image_path)
+
+        logger.debug("Getting EXIF Data from image")
+        exif = getExif(self.image)
+
+        logger.debug("Image EXIF: " + exif)
+
+        pixmap = QPixmap.fromImage(self.image)
+
+        if "Orientation" in exif:
+            logger.debug("Found Orientation in EXIF")
+            pixmap = self.applyExifOrientation(pixmap, exif)
 
         logger.debug("Scaling Image to fit " +
                      str(self.config.screen.width) + "x" +
@@ -129,18 +148,36 @@ class Slideshow(QMainWindow):
         logger.debug("Setting Slide Pixmap")
         self.slide.setPixmap(pixmap)
 
-    def setImage(self, image_path):
-        if self.image_path == image_path:
-            logger.warn("Image already set. Skipping.")
-            return
-
-        logger.debug("Setting new Image")
-        self.image_path = image_path
-
-        logger.debug("Loading Image from " + str(image_path))
-        self.image = QImage(image_path)
-
-        self.setFrame(self.image)
+    def applyExifOrientation(self, pixmap, exif):
+        o = exif["Orientation"]
+        if o == 1:
+            return pixmap
+        elif o == 2:
+            # mirror horizontal
+            return pixmap
+        elif o == 3:
+            # rotate 180 degree
+            return pixmap.transform(QTransform.rotate(180))
+        elif o == 4:
+            # mirror vertical
+            return pixmap
+        elif o == 5:
+            # mirror horizontal
+            # rotate 270 degree
+            return pixmap.transform(QTransform.rotate(270))
+        elif o == 6:
+            # rotate 270 degree
+            return pixmap.transform(QTransform.rotate(270))
+        elif o == 7:
+            # mirrot horizontal
+            # rotate 90 degree
+            return pixmap.transform(QTransform.rotate(90))
+        elif o == 8:
+            # rotate 90 degree
+            return pixmap.transform(QTransform.rotate(90))
+        else:
+            logger.error("Unknown Orientation")
+            return pixmap
 
     def populateImageList(self):
         files = get_files(self.config.screen.image_path,
