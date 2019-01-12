@@ -1,7 +1,8 @@
 from PyQt5.QtCore import Qt, QTimer
-from PyQt5.QtGui import QPixmap, QTransform
+from PyQt5.QtGui import QPixmap
 from PyQt5.QtWidgets import QAction, QLabel, QMainWindow
 from PIL import ImageQt, Image
+import PIL
 
 from config import Config
 from logger import create_logger
@@ -126,7 +127,8 @@ class Slideshow(QMainWindow):
         logger.debug("Loading Image from " + str(image_path))
         image = ImageQt.ImageQt(Image.open(self.image_path))
 
-        if hasattr(image, "_getexif"):
+        if isinstance(image, PIL.Jpeg2KImagePlugin) or \
+           isinstance(image, PIL.JpegImagePlugin):
             logger.debug("Getting EXIF Data from image")
             exif = getExif(image)
 

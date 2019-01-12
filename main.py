@@ -7,8 +7,7 @@ logger = create_logger("main")
 
 
 def main():
-    with open("bildschirm.log", "w") as log:
-        log.write("\n\n")
+    logger.info("Starting Bildschirm")
 
     try:
         logger.info("Loading Config")
