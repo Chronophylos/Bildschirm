@@ -6,7 +6,17 @@ from logger import create_logger
 logger = create_logger("main")
 
 
+def exception_hook(exctype, value, traceback):
+    logger.error(exctype, value, traceback)
+    sys._excepthook(exctype, value, traceback)
+    sys.exit(1)
+
+
 def main():
+    logger.debug("Setting Custom Excepthook")
+    sys._excepthook = sys.excepthook
+    sys.excepthook = exception_hook
+
     logger.info("Starting Bildschirm")
 
     try:

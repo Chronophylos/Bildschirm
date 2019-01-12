@@ -17,10 +17,13 @@ def get_files(path, extensions):
 def getExif(image):
     exif = {}
     info = image._getexif()
-    for tag, value in info.items():
-        decoded = ExifTags.TAGS.get(tag, tag)
-        exif[decoded] = value
-    return exif
+    if info:
+        for tag, value in info.items():
+            decoded = ExifTags.TAGS.get(tag, tag)
+            exif[decoded] = value
+        return exif
+    else:
+        return None
 
 
 class History:

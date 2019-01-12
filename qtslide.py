@@ -2,7 +2,6 @@ from PyQt5.QtCore import Qt, QTimer
 from PyQt5.QtGui import QPixmap
 from PyQt5.QtWidgets import QAction, QLabel, QMainWindow
 from PIL import ImageQt, Image
-import PIL
 
 from config import Config
 from logger import create_logger
@@ -76,13 +75,13 @@ class Slideshow(QMainWindow):
     def resetTimer(self):
         logger.debug("Resetting Timer")
         self.timer.setInterval(self.config.slideshow.interval * 1000)
+        logger.debug(self.timer.interval() / 1000)
 
     def tick(self):
         logger.debug("Timer Tick Received")
         self.nextImage()
 
     def prevImage(self):
-        self.resetTimer()
         logger.debug("Trying to get previous Image")
         if self.history.hasPrev():
             logger.info("Loading previous Image from History "
@@ -92,9 +91,9 @@ class Slideshow(QMainWindow):
         else:
             logger.info("Cannot get previous Image. "
                         "Already at oldest available Image")
+        self.resetTimer()
 
     def nextImage(self):
-        self.resetTimer()
         logger.debug("Trying to get next Image")
         if self.history.hasNext():
             logger.info("Loading next Image from History")
@@ -111,6 +110,7 @@ class Slideshow(QMainWindow):
             image = self.image_list.next()
             self.history.push(image)
             self.setImage(image)
+        self.resetTimer()
 
     def quit(self, code=0):
         logger.info("Quitting")
@@ -125,22 +125,27 @@ class Slideshow(QMainWindow):
         self.image_path = image_path
 
         logger.debug("Loading Image from " + str(image_path))
-        image = ImageQt.ImageQt(Image.open(self.image_path))
+        image = Image.open(self.image_path)
 
-        logger.debug("Image Type: " + type(Image).__name__)
+        logger.debug("Format: " + image.format)
+        logger.debug("Size: " + str(image.size))
+        logger.debug("Mode: " + image.mode)
 
-        if isinstance(image, PIL.Jpeg2KImagePlugin.Jpeg2KImageFile) or \
-           isinstance(image, PIL.JpegImagePlugin.JpegImageFile):
+        if image.format in ["JPG", "JPEG"]:
             logger.debug("Getting EXIF Data from image")
             exif = getExif(image)
 
-            logger.debug("Image EXIF: " + exif)
+            logger.debug("Image EXIF: " + str(exif))
 
             if exif and "Orientation" in exif:
                 logger.debug("Found Orientation in EXIF")
                 pixmap = self.applyExifOrientation(image, exif)
 
-        pixmap = QPixmap.fromImage(image)
+        logger.debug("Converting Image to ImageQt")
+        imageqt = ImageQt.ImageQt(image)
+
+        logger.debug("Converting ImageQt to QPixmap")
+        pixmap = QPixmap.fromImage(imageqt)
 
         logger.debug("Scaling Image to fit " +
                      str(self.config.screen.width) + "x" +
