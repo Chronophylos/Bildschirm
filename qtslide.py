@@ -127,8 +127,11 @@ class Slideshow(QMainWindow):
         logger.debug("Loading Image from " + str(image_path))
         image = ImageQt.ImageQt(Image.open(self.image_path))
 
-        if isinstance(image, PIL.Jpeg2KImagePlugin) or \
-           isinstance(image, PIL.JpegImagePlugin):
+        logger.debug("Image Type: " + str(type(Image)))
+        logger.debug("Image Format: " + str(Image.format))
+
+        if isinstance(image, PIL.Jpeg2KImagePlugin.Jpeg2KImageFile) or \
+           isinstance(image, PIL.JpegImagePlugin.JpegImageFile):
             logger.debug("Getting EXIF Data from image")
             exif = getExif(image)
 
